@@ -2,44 +2,55 @@ version: '3.8'
 
 services:
   app:
-    image: php:8.1-fpm
-    container_name: laravel_app
+    image: dunglas/frankenphp:1-alpine
+    container_name: laravel_frankenphp
     working_dir: /var/www/html
     volumes:
-      - .:/var/www/html
-    environment:
-      - APP_ENV=production
-      - OCTANE_SERVER=frankenphp
-    networks:
-      - laravel
-
-  webserver:
-    image: caddy:2
-    container_name: caddy_webserver
-    volumes:
-      - .:/var/www/html
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./:/var/www/html
+      - ./docker/frankenphp/frankenphp.yaml:/usr/local/etc/frankenphp.yaml
     ports:
-      - "8000:8000"
-    networks:
-      - laravel
-
-  octane:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: octane_server
-    volumes:
-      - .:/var/www/html
-    command: "php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000"
+      - "8080:80"
     environment:
-      - APP_ENV=production
-      - OCTANE_SERVER=frankenphp
-    ports:
-      - "8001:8000"
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:tanFUPgqNDLP3TUSxwjDo31jd1/IHP+UrZoJGObNMso=
+      - LOG_CHANNEL=debug
+      - SESSION_DRIVER=database
+      - SESSION_LIFETIME=120
+    command: "php artisan serve --host=0.0.0.0 --port=80"
     networks:
-      - laravel
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  # Opcional: serviço para executar jobs em segundo plano
+  queue:
+    image: dunglas/frankenphp:1-alpine
+    container_name: laravel_queue
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: "php artisan queue:work"
+    networks:
+      - app-network
+
+volumes:
+  db_data:
 
 networks:
-  laravel:
+  app-network:
     driver: bridge
