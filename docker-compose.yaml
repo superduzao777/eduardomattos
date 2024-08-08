@@ -1,25 +1,23 @@
-version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  php:
+    image: dunglas/frankenphp
+    # uncomment the following line if you want to use a custom Dockerfile
+    #build: .
+    # uncomment the following line if you want to run this in a production environment
+    # restart: always
     ports:
-      - "8080:8080"
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "443:443/udp" # HTTP/3
     volumes:
-      - .:/var/www/html
-      - ./storage:/var/www/html/storage
-      - ./bootstrap/cache:/var/www/html/bootstrap/cache
-      - ./database:/var/www/html/database
-    environment:
-      - APP_ENV=local
-      - APP_KEY=base64:$(openssl rand -base64 32)
-      - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/html/database/database.sqlite
+      - ./:/app/public
+      - caddy_data:/data
+      - caddy_config:/config
+    # comment the following line in production, it allows to have nice human-readable logs in dev
+    tty: true
 
-  # Opcional: Adicionar um serviço para o banco de dados se você precisar de algo além do SQLite
-  # db:
-  #   image: nouchka/sqlite:latest
-  #   volumes:
-  #     - ./database:/var/www/html/database
+# Volumes needed for Caddy certificates and configuration
+volumes:
+  caddy_data:
+  caddy_config:

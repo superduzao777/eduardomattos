@@ -9,7 +9,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Instale o Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Instale as extensões PHP necessárias
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -36,7 +40,7 @@ RUN composer dump-autoload --optimize \
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Exponha a porta que o FrankenPHP usa
-EXPOSE 8080
+EXPOSE 80
 
 # Defina o comando de entrada para o FrankenPHP
 CMD ["frankenphp", "start"]
