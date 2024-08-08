@@ -1,5 +1,5 @@
 # Use a imagem base com PHP e as dependências necessárias
-FROM ghcr.io/frankenphp/frankenphp:latest
+FROM dunglas/frankenphp:latest
 
 # Instale dependências do sistema
 RUN apt-get update && apt-get install -y \
