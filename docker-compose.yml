@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    image: dunglas/frankenphp:1-php8.3-alpine
+    container_name: laravel_app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=production
+      - OCTANE_SERVER=frankenphp
+    networks:
+      - laravel
+
+  webserver:
+    image: caddy:2
+    container_name: caddy_webserver
+    volumes:
+      - .:/var/www/html
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "8000:8000"
+    networks:
+      - laravel
+
+  octane:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: octane_server
+    volumes:
+      - .:/var/www/html
+    command: "php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000"
+    environment:
+      - APP_ENV=production
+      - OCTANE_SERVER=frankenphp
+    ports:
+      - "8001:8000"
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
