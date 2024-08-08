@@ -1,19 +1,42 @@
-FROM dunglas/frankenphp:1-alpine
+# Use a imagem base com PHP e as dependências necessárias
+FROM ghcr.io/frankenphp/frankenphp:latest
 
-# Instala dependências necessárias
-RUN apt-get update && \
-    apt-get install -y \
+# Instale dependências do sistema
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libzip-dev \
     unzip \
     git \
-    curl && \
-    docker-php-ext-install zip pdo pdo_mysql
+    && rm -rf /var/lib/apt/lists/*
 
-# Copia o código da aplicação
-COPY . /var/www/html
+# Instale as extensões PHP necessárias
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip
 
-# Define o diretório de trabalho
+# Configure o diretório de trabalho
 WORKDIR /var/www/html
 
-# Define o comando de entrada padrão
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+# Copie o composer.lock e o composer.json
+COPY composer.lock composer.json ./
+
+# Instale as dependências do Composer
+RUN composer install --no-autoloader --no-scripts
+
+# Copie o restante do código da aplicação
+COPY . .
+
+# Gere o autoload e execute os scripts do Composer
+RUN composer dump-autoload --optimize \
+    && composer run-script post-root-package-install \
+    && composer run-script post-create-project-cmd
+
+# Ajuste as permissões dos diretórios
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+
+# Exponha a porta que o FrankenPHP usa
+EXPOSE 8080
+
+# Defina o comando de entrada para o FrankenPHP
+CMD ["frankenphp", "start"]
