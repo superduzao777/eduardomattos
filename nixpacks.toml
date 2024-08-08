@@ -4,7 +4,7 @@ cmds = ["composer install --optimize-autoloader --no-dev"]
 [phases.setup]
 cmds = [
     "composer require symfony/runtime",
-    "composer require laravel/octane spatie/laravel-frankenphp",
+    "composer require laravel/octane",
     "npm install --production",
 ]
 
