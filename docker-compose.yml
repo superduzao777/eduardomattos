@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: dunglas/frankenphp:1-php8.3-alpine
+    image: php:8.1-fpm
     container_name: laravel_app
     working_dir: /var/www/html
     volumes:
