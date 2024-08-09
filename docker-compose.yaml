@@ -1,23 +1,41 @@
+version: '3.8'
 
 services:
-  php:
-    image: dunglas/frankenphp
-    # uncomment the following line if you want to use a custom Dockerfile
-    #build: .
-    # uncomment the following line if you want to run this in a production environment
-    # restart: always
+  app:
+    image: dunglas/frankenphp:latest
+    container_name: frankenphp_app
     ports:
-      - "80:80" # HTTP
-      - "443:443" # HTTPS
-      - "443:443/udp" # HTTP/3
+      - "80:80"
     volumes:
-      - ./:/app/public
-      - caddy_data:/data
-      - caddy_config:/config
-    # comment the following line in production, it allows to have nice human-readable logs in dev
-    tty: true
+      - ./src:/var/www/html
+      - ./docker/app/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - mysql
+    networks:
+      - app_network
 
-# Volumes needed for Caddy certificates and configuration
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    networks:
+      - app_network
+
 volumes:
-  caddy_data:
-  caddy_config:
+  mysql_data:
+
+networks:
+  app_network:
+    driver: bridge
