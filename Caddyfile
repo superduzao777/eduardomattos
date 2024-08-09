@@ -3,7 +3,7 @@
 {$CADDY_DEBUG}
 
 frankenphp {
-worker /var/www/html/public/index.php
+worker /public/index.php
 }
 
 auto_https off
