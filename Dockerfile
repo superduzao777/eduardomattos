@@ -12,8 +12,14 @@ RUN xcaddy build \
     --with github.com/dunglas/frankenphp/caddy=./caddy/ \
     --with github.com/dunglas/caddy-cbrotli
 
+# Install Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+
 # Application setup stage
-FROM dunglas/frankenphp AS runner
+FROM dunglas/frankenphp:php8.3.10-bookworm AS runner
+
+# Install Composer in the runner stage as well (if needed for further usage)
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Set the working directory
 WORKDIR /var/www/html
