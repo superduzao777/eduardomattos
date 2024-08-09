@@ -1,17 +1,10 @@
-version: '3.8'
-
+# compose.yaml
 services:
-  app:
+  frankenphp:
     build:
       context: .
-      dockerfile: Dockerfile
+    entrypoint: php artisan octane:frankenphp --workers=1 --max-requests=1
     ports:
-      - "80:8080"
+      - "8000:8000"
     volumes:
-      - .:/var/www
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - .:/app

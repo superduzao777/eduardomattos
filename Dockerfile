@@ -1,20 +1,19 @@
-# Use a base image with FrankenPHP
-FROM dunglas/frankenphp:latest
+FROM dunglas/frankenphp:1-alpine
 
-# Set working directory
-WORKDIR /var/www
+# Instala dependências necessárias
+RUN apt-get update && \
+    apt-get install -y \
+    libzip-dev \
+    unzip \
+    git \
+    curl && \
+    docker-php-ext-install zip pdo pdo_mysql
 
-# Copy application code
-COPY . .
+# Copia o código da aplicação
+COPY . /var/www/html
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Define o diretório de trabalho
+WORKDIR /var/www/html
 
-# Install application dependencies
-RUN composer install --no-dev --optimize-autoloader
-
-# Expose the port FrankenPHP will run on
-EXPOSE 8080
-
-# Start FrankenPHP
-CMD ["frankenphp", "public/index.php"]
+# Define o comando de entrada padrão
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
