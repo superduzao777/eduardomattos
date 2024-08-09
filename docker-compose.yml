@@ -9,8 +9,6 @@ services:
         volumes:
             - ./:/var/www/html/${APP_NAME}
             - ./vendor/:/var/www/html/${APP_NAME}/vendor
-        networks:
-            - laraveloctane
         depends_on:
             - mysql
             - redis
@@ -27,8 +25,6 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
             - ./database/mysql-test-data:/var/lib/mysql
-        networks:
-            - laraveloctane
         healthcheck:
             test:
                 - CMD
@@ -43,8 +39,6 @@ services:
             - ${FORWARD_REDIS_PORT:-6379}:6379
         volumes:
             - ./database/redis-data:/data
-        networks:
-            - laraveloctane
         healthcheck:
             test:
                 - CMD
