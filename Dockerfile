@@ -56,6 +56,9 @@ ENV DB_DATABASE=/var/www/html/database/database.sqlite
 # Replace the official binary by the one containing your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
+# Copy the Caddyfile
+COPY Caddyfile /etc/caddy/Caddyfile
+
 # Expose port 8080 and set entrypoint
 EXPOSE 8080
-CMD ["frankenphp", "--root", "/var/www/html/public", "--config", "/etc/caddy/Caddyfile"]
+CMD ["frankenphp", "--config", "/etc/caddy/Caddyfile"]
