@@ -22,3 +22,7 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 nixpacks.toml
+
+/caddy
+frankenphp
+frankenphp-worker.php
