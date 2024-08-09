@@ -14,8 +14,6 @@ services:
         depends_on:
             - mysql
             - redis
-            - minio
-            - mailpit
     mysql:
         image: mysql/mysql-server:${MYSQL_VERSION:-8.0}
         ports:
