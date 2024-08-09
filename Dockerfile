@@ -18,10 +18,11 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Application setup stage
 FROM dunglas/frankenphp AS runner
 
-# Install required packages
+# Install required packages and dependencies for zip extension
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    libzip-dev \
     && docker-php-ext-install zip \
     && apt-get clean
 
