@@ -62,3 +62,4 @@ COPY Caddyfile /etc/caddy/Caddyfile
 # Expose port 8080 and set entrypoint
 EXPOSE 8080
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
