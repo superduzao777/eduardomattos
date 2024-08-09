@@ -58,4 +58,4 @@ COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 # Expose port 8080 and set entrypoint
 EXPOSE 8080
-CMD ["frankenphp", "serve", "--root", "/var/www/html", "--config", "/etc/caddy/Caddyfile"]
+CMD ["frankenphp", "--root", "/var/www/html", "--config", "/etc/caddy/Caddyfile"]
