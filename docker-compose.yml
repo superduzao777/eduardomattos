@@ -7,8 +7,8 @@ services:
             - ${APP_PORT:-8000}:8000
             - ${VITE_PORT:-5173}:${VITE_PORT:-5173}
         volumes:
-            - ./:apps/${APP_NAME}
-            - ./vendor/:apps/${APP_NAME}/vendor
+            - ./:/var/www/html/${APP_NAME}
+            - ./vendor/:/var/www/html/${APP_NAME}/vendor
         networks:
             - laraveloctane
         depends_on:
