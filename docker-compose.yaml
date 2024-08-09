@@ -5,7 +5,7 @@ services:
     image: dunglas/frankenphp:latest
     container_name: frankenphp_app
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./src:/var/www/html
       - ./docker/app/php.ini:/usr/local/etc/php/conf.d/custom.ini
