@@ -4,7 +4,7 @@ services:
             context: ./
             dockerfile: ./.docker/php/Dockerfile.local
         ports:
-            - ${APP_PORT:-8000}:80
+            - 80:80
             - ${VITE_PORT:-5173}:${VITE_PORT:-5173}
         volumes:
             - ./:/var/www/html/${APP_NAME}
