@@ -16,7 +16,14 @@ RUN xcaddy build \
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Application setup stage
-FROM dunglas/frankenphp:php8.3.10-bookworm AS runner
+FROM dunglas/frankenphp AS runner
+
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    && docker-php-ext-install zip \
+    && apt-get clean
 
 # Install Composer in the runner stage as well (if needed for further usage)
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
