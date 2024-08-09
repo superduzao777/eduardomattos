@@ -28,7 +28,7 @@ services:
             MYSQL_PASSWORD: ${DB_PASSWORD}
             MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
-            - ${DB_VOLUME_LOCAL:-./database/mysql-test-data}:/var/lib/mysql
+            - ./database/mysql-test-data:/var/lib/mysql
         networks:
             - laraveloctane
         healthcheck:
@@ -44,7 +44,7 @@ services:
         ports:
             - ${FORWARD_REDIS_PORT:-6379}:6379
         volumes:
-            - ${REDIS_VOLUME_LOCAL:-./database/redis-data}:/data
+            - ./database/redis-data:/data
         networks:
             - laraveloctane
         healthcheck:
