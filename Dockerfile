@@ -1,16 +1,36 @@
-FROM dunglas/frankenphp
+FROM dunglas/frankenphp:latest-builder AS builder
 
-COPY . /opt/app/
-WORKDIR /opt/app/
+# Copy xcaddy in the builder image
+COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    zip \
-    unzip
+# CGO must be enabled to build FrankenPHP
+ENV CGO_ENABLED=1 XCADDY_SETCAP=1 XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'"
+RUN xcaddy build \
+	--output /usr/local/bin/frankenphp \
+	--with github.com/dunglas/frankenphp=./ \
+	--with github.com/dunglas/frankenphp/caddy=./caddy/ \
+    --with github.com/dunglas/caddy-cbrotli \
+    --with github.com/abiosoft/caddy-exec \
+    --with github.com/baldinof/caddy-supervisor
 
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php && \
-    php -r "unlink('composer-setup.php');" && \
-    php composer.phar install
+FROM dunglas/frankenphp AS runner
+
+RUN apt update && apt install -y htop && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+# install laravel necessary php extensions \
+RUN install-php-extensions pdo_mysql pcntl intl redis opcache
+
+ENV SERVER_NAME=:80
+
+COPY --chown=www-data . /app
+
+WORKDIR /app
+
+#COPY Caddyfile /etc/caddy/Caddyfile
+COPY octane.Caddyfile /etc/caddy/Caddyfile
+
+# Replace the official binary by the one contained your custom modules
+COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
+
+ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--port=80", "--admin-port=2089", "--caddyfile=/etc/caddy/Caddyfile", "--workers=20"]
