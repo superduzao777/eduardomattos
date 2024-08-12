@@ -33,4 +33,4 @@ COPY octane.Caddyfile /etc/caddy/Caddyfile
 # Replace the official binary by the one contained your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
-ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--port=80", "--admin-port=2089", "--caddyfile=/etc/caddy/Caddyfile", "--workers=20"]
+ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--port=8080", "--admin-port=2089", "--caddyfile=/etc/caddy/Caddyfile", "--workers=2"]
