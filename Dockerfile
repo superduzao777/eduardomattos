@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the application source code
-COPY ./src /var/www/html
+COPY . /var/www/html
 
 WORKDIR /var/www/html
 
