@@ -6,8 +6,6 @@ services:
     entrypoint: php artisan octane:frankenphp --max-requests=100
     ports:
       - "80:8000"
-      - "443:443"
-      - "443:443/udp"
     volumes:
       - caddy_data:/data
       - caddy_config:/config
