@@ -1,28 +1,19 @@
 {
-	{$CADDY_GLOBAL_OPTIONS}
-
-	frankenphp {
-		#worker /path/to/your/worker.php
-		{$FRANKENPHP_CONFIG}
-	}
-
-	order php_server before file_server
-	order php before file_server
-
-	exec php artisan optimize
-
-	supervisor {
-	    php /app/artisan queue:work
-	}
+  frankenphp
 }
 
-{$CADDY_EXTRA_CONFIG}
+localhost {
+  # Set the webroot to the public/ directory
+  root * /var/www/html/public
 
-{$SERVER_NAME:localhost} {
-	root * public/
-	encode zstd br gzip
+  # Enable compression (optional)
+  encode zstd br gzip
 
-	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+  # Serve PHP files from the public directory
+  route / {
+    handler php_server
+  }
 
-	php_server
+  # Enable HTTPS with automatic certificate generation and renewal
+  tls self_sign
 }

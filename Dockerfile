@@ -1,36 +1,46 @@
-FROM dunglas/frankenphp:latest-builder AS builder
+FROM dunglas/frankenphp
 
-# Copy xcaddy in the builder image
-COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# CGO must be enabled to build FrankenPHP
-ENV CGO_ENABLED=1 XCADDY_SETCAP=1 XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'"
-RUN xcaddy build \
-	--output /usr/local/bin/frankenphp \
-	--with github.com/dunglas/frankenphp=./ \
-	--with github.com/dunglas/frankenphp/caddy=./caddy/ \
-    --with github.com/dunglas/caddy-cbrotli \
-    --with github.com/abiosoft/caddy-exec \
-    --with github.com/baldinof/caddy-supervisor
+# PHP Extensions required for Laravel 11.x
+RUN install-php-extensions \
+    pcntl \
+    bcmath \
+    ctype \
+    fileinfo \
+    json \
+    mbstring \
+    openssl \
+    pdo \
+    tokenizer \
+    xml
 
-FROM dunglas/frankenphp AS runner
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt install -y htop && \
-    apt clean && rm -rf /var/lib/apt/lists/*
+# Copy the application source code
+COPY ./src /var/www/html
 
-# install laravel necessary php extensions \
-RUN install-php-extensions pdo_mysql pcntl intl redis opcache
+WORKDIR /var/www/html
 
-ENV SERVER_NAME=:80
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && mkdir -p /var/www/html/storage \
+    && chmod -R 755 /var/www/html/storage \
+    && mkdir -p /var/www/html/vendor \
+    && chmod -R 755 /var/www/html/vendor
 
-COPY --chown=www-data . /app
+RUN composer install --no-interaction
 
-WORKDIR /app
+# Check if vendor/autoload.php exists
+RUN ls -al vendor
 
-#COPY Caddyfile /etc/caddy/Caddyfile
-COPY octane.Caddyfile /etc/caddy/Caddyfile
+RUN cp .env.example .env
 
-# Replace the official binary by the one contained your custom modules
-COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
+RUN php artisan key:generate
 
-ENTRYPOINT ["php", "artisan", "octane:start", "--server=frankenphp", "--port=8080", "--admin-port=2089", "--caddyfile=/etc/caddy/Caddyfile", "--workers=2"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
