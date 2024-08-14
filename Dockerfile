@@ -2,7 +2,7 @@
 FROM dunglas/frankenphp
 
 # Copiar os arquivos do projeto para o contêiner
-COPY . /app
+COPY . /var/www/html
 
 # Instalar dependências do sistema necessárias
 RUN install-php-extensions \

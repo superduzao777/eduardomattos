@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    working_dir: /var/www/html
     container_name: laravel_app
     restart: unless-stopped
     ports:
