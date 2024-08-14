@@ -1,24 +1,17 @@
 # Use a imagem base do FrankenPHP
-FROM dunglas/frankenphp:latest
-
-# Definir o diretório de trabalho dentro do contêiner
-WORKDIR /var/www/html
+FROM dunglas/frankenphp
 
 # Copiar os arquivos do projeto para o contêiner
-COPY . .
+COPY . /app
 
 # Instalar dependências do sistema necessárias
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo zip
+RUN install-php-extensions \
+	pdo_mysql \
+    pdo_sqlite \
+	gd \
+	intl \
+	zip \
+	opcache
 
 # Instalar o Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -31,6 +24,3 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # Expor a porta padrão do FrankenPHP
 EXPOSE 80
-
-# Definir o comando de inicialização do contêiner
-CMD ["frankenphp", "run", "--config=/var/www/html/frankenphp.yaml"]
