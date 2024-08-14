@@ -1,0 +1,51 @@
+# frankenphp.yaml
+
+# Configurações globais
+server:
+  listen:
+    - "0.0.0.0:80"
+
+# Aplicação Laravel
+apps:
+  - path: "/"
+    document_root: "/var/www/html/public"
+    script: "/var/www/html/public/index.php"
+
+    # Configurações de PHP-FPM
+    php:
+      pm: dynamic
+      pm_max_children: 10
+      pm_start_servers: 2
+      pm_min_spare_servers: 1
+      pm_max_spare_servers: 3
+      pm_process_idle_timeout: 10s
+      pm_max_requests: 500
+
+    # Cabeçalhos
+    headers:
+      "X-Powered-By": "FrankenPHP"
+
+    # Configurações de logs
+    access_log: "/var/log/frankenphp/access.log"
+    error_log: "/var/log/frankenphp/error.log"
+
+# Configuração de cache (opcional)
+cache:
+  enabled: true
+  directory: "/var/cache/frankenphp"
+
+# Configurações de segurança
+security:
+  disable_xpowered_by: true
+  disable_server_tokens: true
+
+# Ajustes adicionais (opcional)
+settings:
+  display_errors: "Off"
+  log_errors: "On"
+  error_reporting: "E_ALL"
+
+# Monitoramento de desempenho (opcional)
+performance:
+  max_execution_time: 30
+  memory_limit: "128M"

@@ -34,6 +34,9 @@ RUN chown -R www-data:www-data /var/www/html \
     && mkdir -p /var/www/html/vendor \
     && chmod -R 755 /var/www/html/vendor
 
+
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
 RUN composer install --no-interaction
 
 # Check if vendor/autoload.php exists
@@ -41,4 +44,10 @@ RUN ls -al vendor
 
 RUN php artisan key:generate
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+RUN php artisan optimize
+
+# Expor a porta padrão do FrankenPHP
+EXPOSE 80
+
+# Iniciar o servidor FrankenPHP
+CMD ["frankenphp", "serve", "--config=/var/www/html/frankenphp.yaml"]
