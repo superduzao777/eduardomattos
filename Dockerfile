@@ -33,4 +33,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 # Definir o comando de inicialização do contêiner
-CMD ["frankenphp", "serve", "--config=/var/www/html/frankenphp.yaml"]
+CMD ["frankenphp", "run", "--config=/var/www/html/frankenphp.yaml"]
