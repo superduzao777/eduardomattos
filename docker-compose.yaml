@@ -22,7 +22,7 @@ services:
       OCTANE_SERVER: frankenphp
       OCTANE_WORKER_NUM: 4
     ports:
-      - "80:80"
+      - "8080:80"
     command: "php artisan octane:start --server=frankenphp --max-requests=500 --workers=4"
 
   scheduler:
