@@ -24,20 +24,7 @@ services:
     ports:
       - "3333:80"
     command: "php artisan octane:start --server=frankenphp --max-requests=500 --workers=4"
-
-  scheduler:
-    image: dunglas/frankenphp:latest
-    container_name: laravel_scheduler
-    restart: unless-stopped
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    entrypoint: |
-      /bin/sh -c "while [ true ]; do
-      php artisan schedule:run --verbose --no-interaction &
-      sleep 60
-      done"
-
+    
   queue:
     image: dunglas/frankenphp:latest
     container_name: laravel_queue
