@@ -13,8 +13,6 @@ RUN install-php-extensions \
     mbstring \
     openssl \
     pdo \
-    pdomysql \
-    pdosqlite \
     tokenizer \
     xml
 
