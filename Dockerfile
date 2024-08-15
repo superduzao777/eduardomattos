@@ -26,5 +26,5 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 # Expor a porta padrão do FrankenPHP
 EXPOSE 80
 
-# Definir o comando de inicialização do contêiner
-CMD ["frankenphp", "run", "--config=/app/frankenphp.yaml"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
+
