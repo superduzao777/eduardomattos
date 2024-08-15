@@ -17,8 +17,9 @@ RUN install-php-extensions \
 # Instalar o Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+WORKDIR /app
 # Instalar as dependências do Laravel via Composer
-RUN composer install --optimize-autoloader --no-dev --working_dir=/app/
+RUN composer install --optimize-autoloader --no-dev
 
 # Ajustar permissões para o diretório de armazenamento e cache
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
