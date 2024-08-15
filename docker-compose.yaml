@@ -6,11 +6,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: laravel_app
+    working_dir: /app
     restart: unless-stopped
     ports:
       - "3333:80"
     volumes:
-      - ./:/app/
+      - ./:/app
       - caddy_data:/data
       - caddy_config:/config
     environment:
