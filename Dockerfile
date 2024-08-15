@@ -2,7 +2,7 @@
 FROM dunglas/frankenphp
 
 # Copiar os arquivos do projeto para o contêiner
-COPY . /var/www/html
+COPY . /app
 
 # Instalar dependências do sistema necessárias
 RUN install-php-extensions \
@@ -20,7 +20,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --optimize-autoloader --no-dev
 
 # Ajustar permissões para o diretório de armazenamento e cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Expor a porta padrão do FrankenPHP
 EXPOSE 80
