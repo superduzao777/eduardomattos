@@ -11,12 +11,15 @@ services:
       - "3333:80"
     volumes:
       - ./:/app/
+      - caddy_data:/data
+      - caddy_config:/config
     environment:
       APP_ENV: production
       APP_DEBUG: true
       APP_KEY: base64:tanFUPgqNDLP3TUSxwjDo31jd1/IHP+UrZoJGObNMso=
       DB_CONNECTION: sqlite
       DB_DATABASE: /app/database/database.sqlite
+    tty: true
 
   redis:
     image: redis:alpine
@@ -29,3 +32,6 @@ services:
 
 volumes:
   redis_data:
+  # Volumes needed for Caddy certificates and configuration
+  caddy_data:
+  caddy_config:
